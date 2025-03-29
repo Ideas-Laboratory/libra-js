@@ -1,0 +1,220 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Scatter Plot Null Values</title>
+</head>
+
+<body>
+    <h1>Scatter Plot Null Values</h1>
+
+    <a href="https://vega.github.io/vega/examples/scatter-plot-null-values/">source</a>
+    <br>
+    <br>
+    <br>
+    <div
+        style="display: inline-block; position: relative;  width: fit-content; height: fit-content; left:650px; top: 50px">
+        <div>
+            yField
+            <select id="y-axis" onchange="changeY(this)">
+                <option value="IMDB Rating" selected>IMDB Rating</option>
+                <option value="Rotten Tomatoes Rating">Rotten Tomatoes Rating</option>
+                <option value="US Gross">US Gross</option>
+                <option value="Worldwide Gross">Worldwide Gross</option>
+            </select>
+        </div>
+        <div>
+            xField
+            <select id="x-axis" onchange="changeX(this)">
+                <option value="IMDB Rating">IMDB Rating</option>
+                <option value="Rotten Tomatoes Rating" selected>Rotten Tomatoes Rating</option>
+                <option value="US Gross">US Gross</option>
+                <option value="Worldwide Gross">Worldwide Gross</option>
+            </select>
+        </div>
+    </div>
+    <br>
+    <svg style="display: inline;"></svg>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        var defX = "Rotten Tomatoes Rating";
+        var defY = "IMDB Rating";
+        function changeX(obj) {
+            // get coordinates selected on x axis;
+            defX = obj.options[obj.options.selectedIndex].value;
+            filterAxis.xa = defX;
+            filterAxis.ya = defY;
+            d3.selectAll(".changeAxis").remove();
+            render(Data, filterAxis);
+
+        }
+
+        function changeY(obj) {
+            // get coordinates selected on y axis;
+            defY = obj.options[obj.options.selectedIndex].value;
+            filterAxis.xa = defX;
+            filterAxis.ya = defY;
+            d3.selectAll(".changeAxis").remove();
+            render(Data, filterAxis);
+
+        }
+        margin = { left: 150, right: 150, top: 50, bottom: 90 };
+        width = 500;
+        height = 450;
+        var svg = d3.select("svg").attr("id", "main_panel")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+        var data_panel = svg.append("g").attr("id", "data_panel")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("width", width)
+            .attr("height", height);
+
+        // create scale objects
+        var xScale = d3.scaleLinear().range([0, width]);
+        var yScale = d3.scaleLinear().range([height, 0]);
+        filterAxis = {
+            xa: "Rotten Tomatoes Rating",//
+            ya: "IMDB Rating"
+        };
+        var nullNumber = 0;
+        var Data;
+        d3.json("https://vega.github.io/vega/data/movies.json", function (error, data) {
+            Data = data
+
+            render(data, filterAxis)
+
+            var legend_panel = d3.select("#main_panel").append("g").attr("id", "legend_panel")
+                .attr("transform", "translate(" + (margin.left + width + 30) + "," + (margin.top + 20) + ")")
+                .attr("width", margin.right)
+                .attr("height", height);
+            // legend_panel.append('text')
+            //     .text('yField')
+            //     .attr('font-size', '1.5em')
+            //     .attr('x', 0)
+            //     .attr('y', 0)
+            //     .attr('fill', 'black')
+            //     .attr("text-anchor", "start")
+            //     .attr("dominant-baseline", "text-after-edge")
+            //     .attr("font-family", "sans-serif")
+            //     .attr("opacity", 0.6);
+            // legend_panel.append('text')
+            //     .text('xField')
+            //     .attr('font-size', '1.5em')
+            //     .attr('x', 0)
+            //     .attr('y', 35)
+            //     .attr('fill', 'black')
+            //     .attr("text-anchor", "start")
+            //     .attr("dominant-baseline", "text-after-edge")
+            //     .attr("font-family", "sans-serif")
+            //     .attr("opacity", 0.6);
+
+
+        });
+
+
+
+
+
+
+        function render(data, filterAxis) {
+            nullNumber = 0;
+            xScale.domain([0, d3.max(data, function (d) { return d[filterAxis.xa]; })]).nice();
+            yScale.domain([0, d3.max(data, function (d) { return d[filterAxis.ya]; })]).nice();
+            data_panel.selectAll(".changeAxis")
+                .data(data)
+                .enter().append("circle")
+                .attr('class', 'changeAxis')
+                .attr("r", function (d) {
+                    if (d[filterAxis.xa] === null && d[filterAxis.ya] === null) { nullNumber++; return 0; }
+                    else { return 5; }
+                })
+                .attr("cx", function (d) {
+                    if (d[filterAxis.xa] === null) { return xScale(d[filterAxis.xa]) - 20; }
+                    return xScale(d[filterAxis.xa]);
+                })
+                .attr("cy", function (d) {
+                    if (d[filterAxis.ya] === null) { return yScale(d[filterAxis.ya]) + 20; }
+                    return yScale(d[filterAxis.ya]);
+                })
+                .attr("fill", function (d) {
+                    if (d[filterAxis.xa] === null || d[filterAxis.ya] === null) { return "#aaa"; }
+                    else {
+                        return "steelblue";
+                    }
+                })
+                .attr("opacity", function (d) {
+                    if (d[filterAxis.xa] === null || d[filterAxis.ya] === null) { return 0.2; }
+                    else {
+                        return 0.5;
+                    }
+                })
+                .on("mouseover", function () {
+                    d3.select(this).attr("fill", "red").attr("opacity", 1);
+                })
+                .on("mouseout", function (d) {
+                    if (d[filterAxis.xa] === null || d[filterAxis.ya] === null) {
+                        d3.select(this).attr("fill", "#aaa").attr("opacity", 0.2);
+                    }
+                    else {
+                        d3.select(this).attr("fill", "steelblue").attr("opacity", 0.5);
+                    }
+
+                });
+            xAxis = d3.axisBottom(xScale).tickFormat(d3.format(".2s"));
+            yAxis = d3.axisLeft(yScale).tickFormat(d3.format(".2s"));
+            //draw axis
+            gX = svg.append('g')
+                .attr("class", "changeAxis")
+                .attr('transform', 'translate(' + (margin.left) + ',' + (margin.top + height + 30) + ')')
+                .call(xAxis);
+            gY = svg.append('g')
+                .attr("class", "changeAxis")
+                .attr('transform', 'translate(' + (margin.left - 30) + ',' + margin.top + ')')
+                .call(yAxis);
+            // text at the original point
+            OT = svg.append("text")
+                .attr("class", "changeAxis")
+                .text(nullNumber + " null")
+                .attr('font-size', '0.8em')
+                .attr('x', margin.left - 35)
+                .attr('y', margin.top + height + 40)
+                .attr('fill', 'black')
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("opacity", 0.5);
+            // text below the x axis
+            OT = svg.append("text")
+            xT = svg.append("text")
+                .attr("class", "changeAxis")
+                .text(filterAxis.xa)
+                .attr('font-size', '1.2em')
+                .attr('x', margin.left + width / 2)
+                .attr('y', margin.top + height + 70)
+                .attr('fill', 'black')
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("font-weight", "bold");
+            // texts about y axis
+            yT = svg.append("g")
+                .attr("class", "changeAxis")
+                .append("text")
+                .text(filterAxis.ya)
+                .attr('font-size', '1.2em')
+                .attr('y', 70)
+                .attr('x', -(margin.top + height / 2))
+                .attr('transform', 'rotate(-90)')
+                .attr('fill', 'black')
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("font-weight", "bold");
+        }
+
+
+
+    </script>
+</body>
+
+</html>

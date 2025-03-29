@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Sortable Bar Chart</title>
+</head>
+
+<body>
+  <h1>Sortable Bar Chart</h1>
+  <a href="https://observablehq.com/@d3/sortable-bar-chart">source</a>
+  <br>
+  <br>
+  <br>
+  <div>
+    <select name="i" >
+      <option value="alphabetical">Alphabetical</option>
+      <option value="ascending">Frequency, ascending</option>
+      <option value="descending">Frequency, descending</option>
+    </select>
+  </div>
+  <br>
+  <svg></svg>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script>
+    const width = 700;
+    const height = 500;
+    const margin = ({ top: 20, right: 0, bottom: 30, left: 40 });
+
+    d3.csv("./alphabet.csv", ({ letter, frequency }) => ({ name: letter, value: +frequency }))
+      .then((data) => {
+        const svg = d3.select("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("viewBox", [0, 0, width, height]);
+
+        const x = d3.scaleBand()
+          .domain(data.map(d => d.name))
+          .range([margin.left, width - margin.right])
+          .padding(0.1)
+        const y = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.value)]).nice()
+          .range([height - margin.bottom, margin.top])
+        const xAxis = g => g
+          .attr("transform", `translate(0,${height - margin.bottom})`)
+          .call(d3.axisBottom(x).tickSizeOuter(0))
+        const yAxis = g => g
+          .attr("transform", `translate(${margin.left},0)`)
+          .call(d3.axisLeft(y))
+          .call(g => g.select(".domain").remove())
+
+        const bar = svg.append("g")
+          .attr("fill", "steelblue")
+          .selectAll("rect")
+          .data(data)
+          .join("rect")
+          .style("mix-blend-mode", "multiply")
+          .attr("x", d => x(d.name))
+          .attr("y", d => y(d.value))
+          .attr("height", d => y(0) - y(d.value))
+          .attr("width", x.bandwidth());
+
+        const gx = svg.append("g")
+          .call(xAxis);
+
+        const gy = svg.append("g")
+          .call(yAxis);
+
+
+        function inputListener() {
+          const selectElem = event.target;
+          const orderString = selectElem.options[selectElem.options.selectedIndex].value;
+          const order = translateOrder(orderString);
+          x.domain(data.sort(order).map(d => d.name));
+
+          const t = svg.transition()
+            .duration(750);
+
+          bar.data(data, d => d.name)
+            .order()
+            .transition(t)
+            .delay((d, i) => i * 20)
+            .attr("x", d => {return x(d.name)});
+
+          gx.transition(t)
+            .call(xAxis)
+            .selectAll(".tick")
+            .delay((d, i) => i * 20);
+        }
+
+        function translateOrder(orderString) {
+          switch(orderString){
+            case "alphabetical":
+              return (a, b) => a.name.localeCompare(b.name);
+            case "ascending":
+              return (a, b) => a.value - b.value;
+            case "descending":
+              return (a, b) => b.value - a.value;
+          }
+        }
+
+        document.querySelector("select").addEventListener("input", inputListener)
+      });
+
+  </script>
+</body>
+
+</html>

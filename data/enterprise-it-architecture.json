@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "name": "企业IT架构",
+      "type": 0,
+      "children": [
+        {
+          "name": "系统",
+          "type": 1,
+          "children": [
+            {
+              "name": "ERP模块",
+              "type": 1,
+              "children": [
+                {"name": "财务模块", "id": "erp_finance"},
+                {"name": "人力资源模块", "id": "erp_hr"},
+                {"name": "供应链模块", "id": "erp_supply_chain"},
+                {"name": "生产管理模块", "id": "erp_production"}
+              ]
+            },
+            {
+              "name": "CRM模块",
+              "type": 1,
+              "children": [
+                {"name": "客户管理模块", "id": "crm_customer"},
+                {"name": "销售管理模块", "id": "crm_sales"},
+                {"name": "市场营销模块", "id": "crm_marketing"},
+                {"name": "服务支持模块", "id": "crm_support"}
+              ]
+            },
+            {
+              "name": "OA模块",
+              "type": 1,
+              "children": [
+                {"name": "文档管理模块", "id": "oa_document"},
+                {"name": "流程审批模块", "id": "oa_approval"},
+                {"name": "会议管理模块", "id": "oa_meeting"},
+                {"name": "考勤管理模块", "id": "oa_attendance"}
+              ]
+            },
+            {
+              "name": "BI模块",
+              "type": 1,
+              "children": [
+                {"name": "数据仓库模块", "id": "bi_warehouse"},
+                {"name": "报表分析模块", "id": "bi_report"},
+                {"name": "数据挖掘模块", "id": "bi_mining"},
+                {"name": "可视化展示模块", "id": "bi_visualization"}
+              ]
+            }
+          ]
+        },
+        {
+          "name": "中台",
+          "type": 2,
+          "children": [
+            {
+              "name": "数据中心",
+              "type": 2,
+              "children": [
+                {"name": "数据采集中心", "id": "data_collection"},
+                {"name": "数据处理中心", "id": "data_processing"},
+                {"name": "数据存储中心", "id": "data_storage"},
+                {"name": "数据服务中心", "id": "data_service"}
+              ]
+            },
+            {
+              "name": "业务中心",
+              "type": 2,
+              "children": [
+                {"name": "用户中心", "id": "business_user"},
+                {"name": "订单中心", "id": "business_order"},
+                {"name": "商品中心", "id": "business_product"},
+                {"name": "支付中心", "id": "business_payment"}
+              ]
+            },
+            {
+              "name": "技术中心",
+              "type": 2,
+              "children": [
+                {"name": "微服务中心", "id": "tech_microservice"},
+                {"name": "API网关中心", "id": "tech_api_gateway"},
+                {"name": "容器化中心", "id": "tech_container"},
+                {"name": "DevOps中心", "id": "tech_devops"}
+              ]
+            },
+            {
+              "name": "AI中心",
+              "type": 2,
+              "children": [
+                {"name": "机器学习中心", "id": "ai_ml"},
+                {"name": "自然语言处理中心", "id": "ai_nlp"},
+                {"name": "计算机视觉中心", "id": "ai_cv"},
+                {"name": "知识图谱中心", "id": "ai_kg"}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "links": [
+    {"source": "erp_finance", "target": "business_order", "value": 1},
+    {"source": "erp_finance", "target": "business_payment", "value": 1},
+    {"source": "erp_hr", "target": "oa_attendance", "value": 1},
+    {"source": "erp_supply_chain", "target": "business_product", "value": 1},
+    {"source": "crm_customer", "target": "business_user", "value": 1},
+    {"source": "crm_sales", "target": "business_order", "value": 1},
+    {"source": "crm_marketing", "target": "ai_ml", "value": 1},
+    {"source": "oa_approval", "target": "tech_microservice", "value": 1},
+    {"source": "bi_warehouse", "target": "data_storage", "value": 1},
+    {"source": "bi_report", "target": "data_service", "value": 1},
+    {"source": "bi_mining", "target": "ai_ml", "value": 1},
+    {"source": "bi_visualization", "target": "data_service", "value": 1},
+    {"source": "data_collection", "target": "tech_api_gateway", "value": 1},
+    {"source": "data_processing", "target": "tech_container", "value": 1},
+    {"source": "business_user", "target": "ai_nlp", "value": 1},
+    {"source": "business_product", "target": "ai_cv", "value": 1},
+    {"source": "tech_devops", "target": "tech_container", "value": 1},
+    {"source": "ai_kg", "target": "data_service", "value": 1}
+  ]
+}

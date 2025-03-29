@@ -1,0 +1,310 @@
+WEBVTT
+
+1
+00:00:00.353 --> 00:00:01.680
+We present Libra
+
+2
+00:00:01.680 --> 00:00:04.033
+an interaction model for data visualization
+
+3
+00:00:04.360 --> 00:00:06.800
+which promotes efficient interaction mechanisms
+
+4
+00:00:06.800 --> 00:00:08.759
+for producing visualization systems
+
+5
+00:00:09.520 --> 00:00:11.191
+In the visualization community
+
+6
+00:00:11.520 --> 00:00:13.560
+the visualization reference model
+
+7
+00:00:13.560 --> 00:00:16.160
+and the Grammar of Graphics are well-known models
+
+8
+00:00:16.160 --> 00:00:19.511
+for describing how data is converted into visual elements
+
+9
+00:00:20.680 --> 00:00:24.630
+However, interaction is only poorly handled by those models
+
+10
+00:00:25.680 --> 00:00:26.640
+For example
+
+11
+00:00:26.640 --> 00:00:29.480
+when creating a scatter plot with interactive brushing
+
+12
+00:00:29.950 --> 00:00:32.638
+typically a rectangle will be shown on the screen
+
+13
+00:00:33.160 --> 00:00:36.120
+But the rectangle itself doesn’t have its place
+
+14
+00:00:36.120 --> 00:00:37.590
+in the visualization reference model
+
+15
+00:00:38.560 --> 00:00:38.960
+Or
+
+16
+00:00:38.960 --> 00:00:42.197
+when elements are selected and highlighted in different colors
+
+17
+00:00:42.560 --> 00:00:45.554
+the interactive part of the visualization will be different
+
+18
+00:00:46.040 --> 00:00:48.272
+but the static part should stay the same
+
+19
+00:00:49.200 --> 00:00:52.399
+The reference model cannot describe these differences
+
+20
+00:00:53.440 --> 00:00:54.520
+Furthermore
+
+21
+00:00:54.520 --> 00:00:57.920
+managing the interaction history is an important aspect
+
+22
+00:00:57.920 --> 00:00:59.070
+for data analysis
+
+23
+00:01:00.360 --> 00:01:03.040
+But such reversible actions cannot be found
+
+24
+00:01:03.040 --> 00:01:04.113
+in the existing models
+
+25
+00:01:05.360 --> 00:01:09.156
+Libra is an extended version of the MVC design pattern
+
+26
+00:01:09.640 --> 00:01:12.634
+whose layer and graphical transformer are the view
+
+27
+00:01:13.000 --> 00:01:15.320
+the service is the model
+
+28
+00:01:15.320 --> 00:01:16.630
+As for all controllers
+
+29
+00:01:16.920 --> 00:01:18.240
+we have two of them
+
+30
+00:01:18.240 --> 00:01:19.392
+one is the instrument
+
+31
+00:01:19.720 --> 00:01:22.600
+the other is the visual encoding
+
+32
+00:01:22.600 --> 00:01:23.800
+In doing so
+
+33
+00:01:23.800 --> 00:01:28.480
+Libra facilitates the design, reuse, composition, and extension
+
+34
+00:01:28.480 --> 00:01:31.273
+of rich interaction techniques for data visualization
+
+35
+00:01:33.280 --> 00:01:36.315
+First, let’s see how to reuse a hover instrument
+
+36
+00:01:37.920 --> 00:01:41.191
+We only need to initialize and attach it to the main layer
+
+37
+00:01:42.040 --> 00:01:45.560
+Since the default feedback just copies the selected elements
+
+38
+00:01:45.560 --> 00:01:47.673
+to the selection layer without highlighting
+
+39
+00:01:48.320 --> 00:01:50.395
+we just change the shared variable
+
+40
+00:01:50.600 --> 00:01:52.755
+of the instrument to highlight the colors
+
+41
+00:01:53.760 --> 00:01:55.796
+Here we set the highlight color to red
+
+42
+00:01:57.040 --> 00:01:57.920
+As a result
+
+43
+00:01:57.920 --> 00:02:02.720
+the selected element now becomes red
+
+44
+00:02:02.720 --> 00:02:03.080
+Next
+
+45
+00:02:03.080 --> 00:02:06.920
+we want to change the interaction mode to brush interaction
+
+46
+00:02:06.920 --> 00:02:09.080
+We only need to change the hover instrument
+
+47
+00:02:09.080 --> 00:02:10.351
+to the brush instrument
+
+48
+00:02:11.680 --> 00:02:14.240
+The feedback displays a transient rectangle
+
+49
+00:02:14.240 --> 00:02:16.119
+with selected elements shown in red
+
+50
+00:02:17.433 --> 00:02:20.680
+This mechanism helps us create the same interaction
+
+51
+00:02:20.680 --> 00:02:22.917
+on different visualizations or services
+
+52
+00:02:24.440 --> 00:02:27.280
+Next, we compose an expressive interaction
+
+53
+00:02:27.280 --> 00:02:29.076
+for an ex-centric labeling technique
+
+54
+00:02:30.280 --> 00:02:31.880
+Based on a hover instrument
+
+55
+00:02:31.880 --> 00:02:35.273
+the interaction can be composed into a shape selection service
+
+56
+00:02:35.600 --> 00:02:36.960
+a layout service
+
+57
+00:02:36.960 --> 00:02:38.392
+and an analysis service
+
+58
+00:02:38.760 --> 00:02:41.120
+where each service has its own visual encoding
+
+59
+00:02:41.120 --> 00:02:43.116
+for redrawing the corresponding layer
+
+60
+00:02:44.640 --> 00:02:47.280
+Since all services and layers are separated
+
+61
+00:02:47.280 --> 00:02:49.711
+from the visual representation of the main layer
+
+62
+00:02:50.040 --> 00:02:53.240
+this ex-centric labeling technique can be reused
+
+63
+00:02:53.240 --> 00:02:54.992
+for any kind of visualization
+
+64
+00:02:55.280 --> 00:02:56.790
+like for example treemaps
+
+65
+00:02:58.240 --> 00:03:03.080
+All the built-in components could be easily extended in Libra
+
+66
+00:03:03.080 --> 00:03:06.551
+In this example, let’s create a multi-modal interaction
+
+67
+00:03:07.480 --> 00:03:10.400
+In order to support touch interaction
+
+68
+00:03:10.400 --> 00:03:13.637
+we are able to extend the specification of the interactor
+
+69
+00:03:14.520 --> 00:03:16.998
+Then, we attach a customized service
+
+70
+00:03:17.194 --> 00:03:20.032
+to the hover instrument and a drag instrument
+
+71
+00:03:20.960 --> 00:03:23.995
+Doing so, the DimpVis technique is implemented
+
+72
+00:03:24.800 --> 00:03:26.430
+More complicated examples
+
+73
+00:03:26.680 --> 00:03:28.880
+such as interactive K-Means
+
+74
+00:03:28.880 --> 00:03:31.194
+are created by customized components
+
+75
+00:03:31.360 --> 00:03:32.314
+which are combined
+
+76
+00:03:33.040 --> 00:03:35.432
+More examples are shown on our website
+
+77
+00:03:36.356 --> 00:03:37.873
+Thanks for your attention
+

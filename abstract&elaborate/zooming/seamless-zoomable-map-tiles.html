@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Seamless Zoomable Map Tiles</title>
+</head>
+
+<body>
+  <h1>Seamless Zoomable Map Tiles</h1>
+  <a href="https://observablehq.com/@d3/seamless-zoomable-map-tiles">source</a>
+  <br>
+  <br>
+  <br>
+  <svg></svg>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-tile@1"></script>
+  <script>
+    const height = 600;
+    const width = 1000;
+    const showlayers = false;
+    // Kartendaten: © [OpenStreetMap](https://openstreetmap.org/copyright)-Mitwirkende, SRTM | Kartendarstellung: © [OpenTopoMap](http://opentopomap.org/) (CC-BY-SA)
+    const deltas = [-100, -4, -1, 0]
+    //const url = (x, y, z) => `https://tile.opentopomap.org/${z}/${x}/${y}.png`
+    const url = (x, y, z) => `https://api.mapbox.com/v4/mapbox.satellite/${z}/${x}/${y}.png?access_token=pk.eyJ1IjoidmlydXNwYyIsImEiOiJja2xjZ3ljcGQwcDRiMnBwMGY5cGl6M2wzIn0.fjAvh4hJmiB-aG5pzNzJpw`
+    let transform = d3.zoomIdentity.translate(width >> 1, height >> 1).scale(1 << 12)
+    
+    const svg = d3.select("svg").attr("width", width).attr("height", height).attr("viewBox", [0, 0, width, height])
+    const tile = d3.tile()
+      .extent([[0, 0], [width, height]])
+      .tileSize(512)
+      .clampX(false);
+
+  const zoom = d3.zoom()
+      .scaleExtent([1 << 8, 1 << 22])
+      .extent([[0, 0], [width, height]])
+      .on("zoom", (event) => zoomed(event.transform));
+
+  const levels = svg.append("g")
+      .attr("pointer-events", "none")
+    .selectAll("g")
+    .data(deltas)
+    .join("g")
+      .style("opacity", showlayers ? 0.3 : null);
+
+  svg
+      .call(zoom)
+      .call(zoom.transform, transform);
+
+  function zoomed(transform2) {
+    transform = transform2;
+      
+
+    levels.each(function(delta) {
+      const tiles = tile.zoomDelta(delta)(transform);
+
+      d3.select(this)
+        .selectAll("image")
+        .data(tiles, d => d)
+        .join("image")
+          .attr("xlink:href", d => url(...d3.tileWrap(d)))
+          .attr("x", ([x]) => (x + tiles.translate[0]) * tiles.scale)
+          .attr("y", ([, y]) => (y + tiles.translate[1]) * tiles.scale)
+          .attr("width", tiles.scale)
+          .attr("height", tiles.scale);
+    });
+  }
+
+
+  </script>
+</body>
+
+</html>

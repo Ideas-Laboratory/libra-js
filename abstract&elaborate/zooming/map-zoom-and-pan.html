@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Map Zoom and Pan</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <h1>Map Zoom and Pan</h1>
+    <a href="https://public.tableau.com/profile/lorna.eden#!/vizhome/WorkoutWednesday2018Week31/WorkoutWednesday2018Week31">source</a>
+    <br>
+    <br>
+    <br>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script>
+        var width = 660,
+            height = 400;
+
+        var projection = d3.geoMercator()
+            .center([0, 5])
+            .scale(150)
+            .rotate([-180, 0]);
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var path = d3.geoPath()
+            .projection(projection);
+
+        var g = svg.append("g");
+
+        // https://gw.alipayobjects.com/os/antvdemo/assets/data/world.geo.json
+        d3.json("./world.geo.json").then(function (data) {
+            
+            g.selectAll("path")
+                // .data(topojson.feature(topology, topology.objects.countries)
+                //     .features)
+                .data(data.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("fill", "#e5e8d3")
+                .attr("stroke", "#bbb")
+                .attr("stroke-width", "0.25px")
+                .on("mouseover", function () {
+                    d3.select(this).attr("fill", "#FF6666");
+                })
+                .on("mouseout", function () {
+                    d3.select(this).attr("fill", "#e5e8d3");
+                });
+
+        });
+
+        var zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on('zoom', function () {
+                g.selectAll('path')
+                    .attr('transform', d3.event.transform);
+            });
+
+        svg.call(zoom);
+
+    </script>
+</body>
+
+</html>

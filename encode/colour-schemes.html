@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <h1>Colour Schemes</h1>
+  <a href="https://observablehq.com/@simon-lang/vega-colour-schemes">source</a>
+  <br/>
+  <br/>
+  <br/>
+  <div>
+    color scheme
+    <select name="input" onchange="changeColorScheme(this)">
+      <option value="accent" selected>accent</option>
+      <option value="category10">category10</option>
+      <option value="dark2">dark2</option>
+      <option value="paired">paired</option>
+      <option value="pastel1">pastel1</option>
+      <option value="pastel2">pastel2</option>
+      <option value="set1">set1</option>
+      <option value="set2">set2</option>
+      <option value="set3">set3</option>
+      <option value="tableau10">tableau10</option>
+    </select>
+  </div>
+  <svg></svg>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script>
+    const data = [{"color":"University of London","label":"1990","value":19,"$$hashKey":"object:6581"},{"color":"Medical Research Council","label":"1990","value":14,"$$hashKey":"object:6582"},{"color":"Mahidol University","label":"1990","value":12,"$$hashKey":"object:6583"},{"color":"Liverpool School of Tropical Medicine","label":"1990","value":11,"$$hashKey":"object:6584"},{"color":"John Radcliffe Hospital","label":"1990","value":10,"$$hashKey":"object:6585"},{"color":"Kenya Medical Research Institute","label":"1990","value":8,"$$hashKey":"object:6586"},{"color":"University of Oxford","label":"1990","value":7,"$$hashKey":"object:6587"},{"color":"Imperial College London","label":"1990","value":5,"$$hashKey":"object:6588"},{"color":"University of London","label":"1991","value":19,"$$hashKey":"object:6589"},{"color":"Mahidol University","label":"1991","value":18,"$$hashKey":"object:6590"},{"color":"John Radcliffe Hospital","label":"1991","value":14,"$$hashKey":"object:6591"},{"color":"Medical Research Council","label":"1991","value":14,"$$hashKey":"object:6592"},{"color":"Kenya Medical Research Institute","label":"1991","value":12,"$$hashKey":"object:6593"},{"color":"University of Oxford","label":"1991","value":10,"$$hashKey":"object:6594"},{"color":"Liverpool School of Tropical Medicine","label":"1991","value":6,"$$hashKey":"object:6595"},{"color":"Imperial College London","label":"1991","value":5,"$$hashKey":"object:6596"},{"color":"Mahidol University","label":"1992","value":28,"$$hashKey":"object:6597"},{"color":"University of London","label":"1992","value":20,"$$hashKey":"object:6598"},{"color":"John Radcliffe Hospital","label":"1992","value":18,"$$hashKey":"object:6599"},{"color":"Medical Research Council","label":"1992","value":12,"$$hashKey":"object:6600"},{"color":"Liverpool School of Tropical Medicine","label":"1992","value":11,"$$hashKey":"object:6601"},{"color":"University of Oxford","label":"1992","value":10,"$$hashKey":"object:6602"},{"color":"Imperial College London","label":"1992","value":7,"$$hashKey":"object:6603"},{"color":"Kenya Medical Research Institute","label":"1992","value":7,"$$hashKey":"object:6604"},{"color":"University of São Paulo","label":"1992","value":4,"$$hashKey":"object:6605"},{"color":"University of London","label":"1993","value":31,"$$hashKey":"object:6606"},{"color":"Medical Research Council","label":"1993","value":23,"$$hashKey":"object:6607"},{"color":"Mahidol University","label":"1993","value":20,"$$hashKey":"object:6608"},{"color":"John Radcliffe Hospital","label":"1993","value":15,"$$hashKey":"object:6609"},{"color":"Kenya Medical Research Institute","label":"1993","value":10,"$$hashKey":"object:6610"},{"color":"University of Oxford","label":"1993","value":9,"$$hashKey":"object:6611"},{"color":"Liverpool School of Tropical Medicine","label":"1993","value":8,"$$hashKey":"object:6612"},{"color":"University of São Paulo","label":"1993","value":6,"$$hashKey":"object:6613"},{"color":"Imperial College London","label":"1993","value":5,"$$hashKey":"object:6614"},{"color":"University of London","label":"1994","value":31,"$$hashKey":"object:6615"},{"color":"Mahidol University","label":"1994","value":22,"$$hashKey":"object:6616"},{"color":"John Radcliffe Hospital","label":"1994","value":18,"$$hashKey":"object:6617"},{"color":"Liverpool School of Tropical Medicine","label":"1994","value":16,"$$hashKey":"object:6618"},{"color":"Medical Research Council","label":"1994","value":13,"$$hashKey":"object:6619"},{"color":"Kenya Medical Research Institute","label":"1994","value":12,"$$hashKey":"object:6620"},{"color":"Imperial College London","label":"1994","value":11,"$$hashKey":"object:6621"},{"color":"University of Oxford","label":"1994","value":11,"$$hashKey":"object:6622"},{"color":"University of São Paulo","label":"1994","value":6,"$$hashKey":"object:6623"},{"color":"University of London","label":"1995","value":32,"$$hashKey":"object:6624"},{"color":"John Radcliffe Hospital","label":"1995","value":19,"$$hashKey":"object:6625"},{"color":"Mahidol University","label":"1995","value":18,"$$hashKey":"object:6626"},{"color":"Medical Research Council","label":"1995","value":17,"$$hashKey":"object:6627"},{"color":"University of Oxford","label":"1995","value":7,"$$hashKey":"object:6628"},{"color":"Kenya Medical Research Institute","label":"1995","value":6,"$$hashKey":"object:6629"},{"color":"Imperial College London","label":"1995","value":5,"$$hashKey":"object:6630"},{"color":"Liverpool School of Tropical Medicine","label":"1995","value":5,"$$hashKey":"object:6631"},{"color":"University of São Paulo","label":"1995","value":3,"$$hashKey":"object:6632"},{"color":"University of London","label":"1996","value":27,"$$hashKey":"object:6633"},{"color":"Mahidol University","label":"1996","value":25,"$$hashKey":"object:6634"},{"color":"John Radcliffe Hospital","label":"1996","value":23,"$$hashKey":"object:6635"},{"color":"Kenya Medical Research Institute","label":"1996","value":20,"$$hashKey":"object:6636"},{"color":"Imperial College London","label":"1996","value":18,"$$hashKey":"object:6637"},{"color":"Medical Research Council","label":"1996","value":14,"$$hashKey":"object:6638"},{"color":"University of São Paulo","label":"1996","value":11,"$$hashKey":"object:6639"},{"color":"Liverpool School of Tropical Medicine","label":"1996","value":8,"$$hashKey":"object:6640"},{"color":"University of Oxford","label":"1996","value":8,"$$hashKey":"object:6641"},{"color":"University of London","label":"1997","value":37,"$$hashKey":"object:6642"},{"color":"John Radcliffe Hospital","label":"1997","value":29,"$$hashKey":"object:6643"},{"color":"Mahidol University","label":"1997","value":25,"$$hashKey":"object:6644"},{"color":"Kenya Medical Research Institute","label":"1997","value":18,"$$hashKey":"object:6645"},{"color":"Medical Research Council","label":"1997","value":15,"$$hashKey":"object:6646"},{"color":"Imperial College London","label":"1997","value":12,"$$hashKey":"object:6647"},{"color":"University of São Paulo","label":"1997","value":12,"$$hashKey":"object:6648"},{"color":"Liverpool School of Tropical Medicine","label":"1997","value":11,"$$hashKey":"object:6649"},{"color":"University of Oxford","label":"1997","value":8,"$$hashKey":"object:6650"},{"color":"University of London","label":"1998","value":45,"$$hashKey":"object:6651"},{"color":"Mahidol University","label":"1998","value":31,"$$hashKey":"object:6652"},{"color":"John Radcliffe Hospital","label":"1998","value":29,"$$hashKey":"object:6653"},{"color":"University of Oxford","label":"1998","value":26,"$$hashKey":"object:6654"},{"color":"Liverpool School of Tropical Medicine","label":"1998","value":18,"$$hashKey":"object:6655"},{"color":"Kenya Medical Research Institute","label":"1998","value":17,"$$hashKey":"object:6656"},{"color":"Imperial College London","label":"1998","value":12,"$$hashKey":"object:6657"},{"color":"University of São Paulo","label":"1998","value":11,"$$hashKey":"object:6658"},{"color":"Medical Research Council","label":"1998","value":10,"$$hashKey":"object:6659"},{"color":"University of London","label":"1999","value":38,"$$hashKey":"object:6660"},{"color":"Mahidol University","label":"1999","value":32,"$$hashKey":"object:6661"},{"color":"John Radcliffe Hospital","label":"1999","value":30,"$$hashKey":"object:6662"},{"color":"University of Oxford","label":"1999","value":20,"$$hashKey":"object:6663"},{"color":"Kenya Medical Research Institute","label":"1999","value":18,"$$hashKey":"object:6664"},{"color":"Liverpool School of Tropical Medicine","label":"1999","value":18,"$$hashKey":"object:6665"},{"color":"University of São Paulo","label":"1999","value":16,"$$hashKey":"object:6666"},{"color":"Imperial College London","label":"1999","value":13,"$$hashKey":"object:6667"},{"color":"Medical Research Council","label":"1999","value":13,"$$hashKey":"object:6668"},{"color":"University of London","label":"2000","value":43,"$$hashKey":"object:6669"},{"color":"Mahidol University","label":"2000","value":34,"$$hashKey":"object:6670"},{"color":"University of Oxford","label":"2000","value":30,"$$hashKey":"object:6671"},{"color":"John Radcliffe Hospital","label":"2000","value":23,"$$hashKey":"object:6672"},{"color":"Kenya Medical Research Institute","label":"2000","value":23,"$$hashKey":"object:6673"},{"color":"Imperial College London","label":"2000","value":18,"$$hashKey":"object:6674"},{"color":"University of São Paulo","label":"2000","value":18,"$$hashKey":"object:6675"},{"color":"Medical Research Council","label":"2000","value":16,"$$hashKey":"object:6676"},{"color":"Liverpool School of Tropical Medicine","label":"2000","value":15,"$$hashKey":"object:6677"},{"color":"Oswaldo Cruz Foundation","label":"2000","value":11,"$$hashKey":"object:6678"},{"color":"University of London","label":"2001","value":60,"$$hashKey":"object:6679"},{"color":"Mahidol University","label":"2001","value":31,"$$hashKey":"object:6680"},{"color":"John Radcliffe Hospital","label":"2001","value":22,"$$hashKey":"object:6681"},{"color":"University of Oxford","label":"2001","value":22,"$$hashKey":"object:6682"},{"color":"Kenya Medical Research Institute","label":"2001","value":21,"$$hashKey":"object:6683"},{"color":"Liverpool School of Tropical Medicine","label":"2001","value":19,"$$hashKey":"object:6684"},{"color":"Medical Research Council","label":"2001","value":16,"$$hashKey":"object:6685"},{"color":"Imperial College London","label":"2001","value":15,"$$hashKey":"object:6686"},{"color":"University of São Paulo","label":"2001","value":14,"$$hashKey":"object:6687"},{"color":"University of London","label":"2002","value":56,"$$hashKey":"object:6688"},{"color":"Mahidol University","label":"2002","value":37,"$$hashKey":"object:6689"},{"color":"John Radcliffe Hospital","label":"2002","value":36,"$$hashKey":"object:6690"},{"color":"Kenya Medical Research Institute","label":"2002","value":32,"$$hashKey":"object:6691"},{"color":"Liverpool School of Tropical Medicine","label":"2002","value":27,"$$hashKey":"object:6692"},{"color":"University of Oxford","label":"2002","value":23,"$$hashKey":"object:6693"},{"color":"Imperial College London","label":"2002","value":19,"$$hashKey":"object:6694"},{"color":"University of São Paulo","label":"2002","value":13,"$$hashKey":"object:6695"},{"color":"Medical Research Council","label":"2002","value":11,"$$hashKey":"object:6696"},{"color":"University of London","label":"2003","value":57,"$$hashKey":"object:6697"},{"color":"Kenya Medical Research Institute","label":"2003","value":44,"$$hashKey":"object:6698"},{"color":"Mahidol University","label":"2003","value":40,"$$hashKey":"object:6699"},{"color":"John Radcliffe Hospital","label":"2003","value":32,"$$hashKey":"object:6700"},{"color":"Liverpool School of Tropical Medicine","label":"2003","value":29,"$$hashKey":"object:6701"},{"color":"University of Oxford","label":"2003","value":17,"$$hashKey":"object:6702"},{"color":"University of São Paulo","label":"2003","value":17,"$$hashKey":"object:6703"},{"color":"Imperial College London","label":"2003","value":14,"$$hashKey":"object:6704"},{"color":"Medical Research Council","label":"2003","value":13,"$$hashKey":"object:6705"},{"color":"University of London","label":"2004","value":88,"$$hashKey":"object:6706"},{"color":"Mahidol University","label":"2004","value":53,"$$hashKey":"object:6707"},{"color":"Kenya Medical Research Institute","label":"2004","value":52,"$$hashKey":"object:6708"},{"color":"Liverpool School of Tropical Medicine","label":"2004","value":36,"$$hashKey":"object:6709"},{"color":"John Radcliffe Hospital","label":"2004","value":34,"$$hashKey":"object:6710"},{"color":"University of Oxford","label":"2004","value":26,"$$hashKey":"object:6711"},{"color":"University of São Paulo","label":"2004","value":18,"$$hashKey":"object:6712"},{"color":"Oswaldo Cruz Foundation","label":"2004","value":15,"$$hashKey":"object:6713"},{"color":"Imperial College London","label":"2004","value":14,"$$hashKey":"object:6714"},{"color":"Medical Research Council","label":"2004","value":14,"$$hashKey":"object:6715"},{"color":"University of London","label":"2005","value":90,"$$hashKey":"object:6716"},{"color":"Kenya Medical Research Institute","label":"2005","value":65,"$$hashKey":"object:6717"},{"color":"Liverpool School of Tropical Medicine","label":"2005","value":46,"$$hashKey":"object:6718"},{"color":"Mahidol University","label":"2005","value":42,"$$hashKey":"object:6719"},{"color":"University of Oxford","label":"2005","value":37,"$$hashKey":"object:6720"},{"color":"John Radcliffe Hospital","label":"2005","value":32,"$$hashKey":"object:6721"},{"color":"Imperial College London","label":"2005","value":24,"$$hashKey":"object:6722"},{"color":"University of São Paulo","label":"2005","value":19,"$$hashKey":"object:6723"},{"color":"Medical Research Council","label":"2005","value":14,"$$hashKey":"object:6724"},{"color":"University of London","label":"2006","value":101,"$$hashKey":"object:6725"},{"color":"Kenya Medical Research Institute","label":"2006","value":77,"$$hashKey":"object:6726"},{"color":"Mahidol University","label":"2006","value":57,"$$hashKey":"object:6727"},{"color":"Liverpool School of Tropical Medicine","label":"2006","value":49,"$$hashKey":"object:6728"},{"color":"University of Oxford","label":"2006","value":43,"$$hashKey":"object:6729"},{"color":"John Radcliffe Hospital","label":"2006","value":29,"$$hashKey":"object:6730"},{"color":"Medical Research Council","label":"2006","value":28,"$$hashKey":"object:6731"},{"color":"Imperial College London","label":"2006","value":26,"$$hashKey":"object:6732"},{"color":"University of London","label":"2007","value":137,"$$hashKey":"object:6733"},{"color":"Kenya Medical Research Institute","label":"2007","value":74,"$$hashKey":"object:6734"},{"color":"Mahidol University","label":"2007","value":65,"$$hashKey":"object:6735"},{"color":"Liverpool School of Tropical Medicine","label":"2007","value":57,"$$hashKey":"object:6736"},{"color":"John Radcliffe Hospital","label":"2007","value":37,"$$hashKey":"object:6737"},{"color":"Imperial College London","label":"2007","value":35,"$$hashKey":"object:6738"},{"color":"University of Oxford","label":"2007","value":29,"$$hashKey":"object:6739"},{"color":"Medical Research Council","label":"2007","value":28,"$$hashKey":"object:6740"},{"color":"University of São Paulo","label":"2007","value":28,"$$hashKey":"object:6741"},{"color":"Oswaldo Cruz Foundation","label":"2007","value":20,"$$hashKey":"object:6742"},{"color":"University of London","label":"2008","value":170,"$$hashKey":"object:6743"},{"color":"Kenya Medical Research Institute","label":"2008","value":85,"$$hashKey":"object:6744"},{"color":"Mahidol University","label":"2008","value":62,"$$hashKey":"object:6745"},{"color":"University of Oxford","label":"2008","value":58,"$$hashKey":"object:6746"},{"color":"Liverpool School of Tropical Medicine","label":"2008","value":55,"$$hashKey":"object:6747"},{"color":"Medical Research Council","label":"2008","value":44,"$$hashKey":"object:6748"},{"color":"John Radcliffe Hospital","label":"2008","value":42,"$$hashKey":"object:6749"},{"color":"Imperial College London","label":"2008","value":40,"$$hashKey":"object:6750"},{"color":"Oswaldo Cruz Foundation","label":"2008","value":25,"$$hashKey":"object:6751"},{"color":"University of São Paulo","label":"2008","value":21,"$$hashKey":"object:6752"},{"color":"University of London","label":"2009","value":166,"$$hashKey":"object:6753"},{"color":"University of Oxford","label":"2009","value":77,"$$hashKey":"object:6754"},{"color":"Kenya Medical Research Institute","label":"2009","value":75,"$$hashKey":"object:6755"},{"color":"Mahidol University","label":"2009","value":63,"$$hashKey":"object:6756"},{"color":"Imperial College London","label":"2009","value":52,"$$hashKey":"object:6757"},{"color":"Liverpool School of Tropical Medicine","label":"2009","value":50,"$$hashKey":"object:6758"},{"color":"Medical Research Council","label":"2009","value":37,"$$hashKey":"object:6759"},{"color":"John Radcliffe Hospital","label":"2009","value":35,"$$hashKey":"object:6760"},{"color":"Oswaldo Cruz Foundation","label":"2009","value":25,"$$hashKey":"object:6761"},{"color":"University of London","label":"2010","value":205,"$$hashKey":"object:6762"},{"color":"University of Oxford","label":"2010","value":112,"$$hashKey":"object:6763"},{"color":"Kenya Medical Research Institute","label":"2010","value":85,"$$hashKey":"object:6764"},{"color":"Mahidol University","label":"2010","value":69,"$$hashKey":"object:6765"},{"color":"Liverpool School of Tropical Medicine","label":"2010","value":66,"$$hashKey":"object:6766"},{"color":"Oswaldo Cruz Foundation","label":"2010","value":55,"$$hashKey":"object:6767"},{"color":"Imperial College London","label":"2010","value":49,"$$hashKey":"object:6768"},{"color":"University of São Paulo","label":"2010","value":26,"$$hashKey":"object:6769"},{"color":"John Radcliffe Hospital","label":"2010","value":21,"$$hashKey":"object:6770"},{"color":"University of London","label":"2011","value":187,"$$hashKey":"object:6771"},{"color":"University of Oxford","label":"2011","value":136,"$$hashKey":"object:6772"},{"color":"Kenya Medical Research Institute","label":"2011","value":93,"$$hashKey":"object:6773"},{"color":"Liverpool School of Tropical Medicine","label":"2011","value":85,"$$hashKey":"object:6774"},{"color":"Mahidol University","label":"2011","value":71,"$$hashKey":"object:6775"},{"color":"Imperial College London","label":"2011","value":67,"$$hashKey":"object:6776"},{"color":"Oswaldo Cruz Foundation","label":"2011","value":40,"$$hashKey":"object:6777"},{"color":"University of São Paulo","label":"2011","value":24,"$$hashKey":"object:6778"},{"color":"Medical Research Council","label":"2011","value":20,"$$hashKey":"object:6779"},{"color":"University of London","label":"2012","value":200,"$$hashKey":"object:6780"},{"color":"University of Oxford","label":"2012","value":195,"$$hashKey":"object:6781"},{"color":"Mahidol University","label":"2012","value":123,"$$hashKey":"object:6782"},{"color":"Kenya Medical Research Institute","label":"2012","value":92,"$$hashKey":"object:6783"},{"color":"Liverpool School of Tropical Medicine","label":"2012","value":84,"$$hashKey":"object:6784"},{"color":"Imperial College London","label":"2012","value":70,"$$hashKey":"object:6785"},{"color":"University of São Paulo","label":"2012","value":40,"$$hashKey":"object:6786"},{"color":"Medical Research Council","label":"2012","value":35,"$$hashKey":"object:6787"},{"color":"Oswaldo Cruz Foundation","label":"2012","value":35,"$$hashKey":"object:6788"},{"color":"University of London","label":"2013","value":223,"$$hashKey":"object:6789"},{"color":"University of Oxford","label":"2013","value":174,"$$hashKey":"object:6790"},{"color":"Kenya Medical Research Institute","label":"2013","value":97,"$$hashKey":"object:6791"},{"color":"Liverpool School of Tropical Medicine","label":"2013","value":96,"$$hashKey":"object:6792"},{"color":"Mahidol University","label":"2013","value":73,"$$hashKey":"object:6793"},{"color":"Imperial College London","label":"2013","value":70,"$$hashKey":"object:6794"},{"color":"Oswaldo Cruz Foundation","label":"2013","value":67,"$$hashKey":"object:6795"},{"color":"University of São Paulo","label":"2013","value":43,"$$hashKey":"object:6796"},{"color":"Medical Research Council","label":"2013","value":27,"$$hashKey":"object:6797"},{"color":"University of London","label":"2014","value":274,"$$hashKey":"object:6798"},{"color":"University of Oxford","label":"2014","value":238,"$$hashKey":"object:6799"},{"color":"Liverpool School of Tropical Medicine","label":"2014","value":137,"$$hashKey":"object:6800"},{"color":"Mahidol University","label":"2014","value":123,"$$hashKey":"object:6801"},{"color":"Imperial College London","label":"2014","value":94,"$$hashKey":"object:6802"},{"color":"Kenya Medical Research Institute","label":"2014","value":81,"$$hashKey":"object:6803"},{"color":"Oswaldo Cruz Foundation","label":"2014","value":74,"$$hashKey":"object:6804"},{"color":"University of São Paulo","label":"2014","value":65,"$$hashKey":"object:6805"},{"color":"Medical Research Council","label":"2014","value":44,"$$hashKey":"object:6806"},{"color":"University of London","label":"2015","value":280,"$$hashKey":"object:6807"},{"color":"University of Oxford","label":"2015","value":235,"$$hashKey":"object:6808"},{"color":"Liverpool School of Tropical Medicine","label":"2015","value":134,"$$hashKey":"object:6809"},{"color":"Kenya Medical Research Institute","label":"2015","value":107,"$$hashKey":"object:6810"},{"color":"Imperial College London","label":"2015","value":102,"$$hashKey":"object:6811"},{"color":"Mahidol University","label":"2015","value":102,"$$hashKey":"object:6812"},{"color":"Oswaldo Cruz Foundation","label":"2015","value":82,"$$hashKey":"object:6813"},{"color":"University of São Paulo","label":"2015","value":42,"$$hashKey":"object:6814"},{"color":"Medical Research Council","label":"2015","value":32,"$$hashKey":"object:6815"},{"color":"University of London","label":"2016","value":277,"$$hashKey":"object:6816"},{"color":"University of Oxford","label":"2016","value":226,"$$hashKey":"object:6817"},{"color":"Mahidol University","label":"2016","value":142,"$$hashKey":"object:6818"},{"color":"Liverpool School of Tropical Medicine","label":"2016","value":122,"$$hashKey":"object:6819"},{"color":"Imperial College London","label":"2016","value":117,"$$hashKey":"object:6820"},{"color":"Kenya Medical Research Institute","label":"2016","value":80,"$$hashKey":"object:6821"},{"color":"Oswaldo Cruz Foundation","label":"2016","value":78,"$$hashKey":"object:6822"},{"color":"University of São Paulo","label":"2016","value":51,"$$hashKey":"object:6823"},{"color":"Medical Research Council","label":"2016","value":49,"$$hashKey":"object:6824"},{"color":"University of London","label":"2017","value":221,"$$hashKey":"object:6825"},{"color":"University of Oxford","label":"2017","value":214,"$$hashKey":"object:6826"},{"color":"Mahidol University","label":"2017","value":136,"$$hashKey":"object:6827"},{"color":"Liverpool School of Tropical Medicine","label":"2017","value":92,"$$hashKey":"object:6828"},{"color":"Imperial College London","label":"2017","value":81,"$$hashKey":"object:6829"},{"color":"Kenya Medical Research Institute","label":"2017","value":68,"$$hashKey":"object:6830"},{"color":"Oswaldo Cruz Foundation","label":"2017","value":64,"$$hashKey":"object:6831"},{"color":"University of São Paulo","label":"2017","value":32,"$$hashKey":"object:6832"},{"color":"University of Oxford","label":"2018","value":174,"$$hashKey":"object:6833"},{"color":"University of London","label":"2018","value":139,"$$hashKey":"object:6834"},{"color":"Mahidol University","label":"2018","value":125,"$$hashKey":"object:6835"},{"color":"Liverpool School of Tropical Medicine","label":"2018","value":90,"$$hashKey":"object:6836"},{"color":"Imperial College London","label":"2018","value":65,"$$hashKey":"object:6837"},{"color":"Oswaldo Cruz Foundation","label":"2018","value":54,"$$hashKey":"object:6838"},{"color":"Kenya Medical Research Institute","label":"2018","value":47,"$$hashKey":"object:6839"},{"color":"University of São Paulo","label":"2018","value":42,"$$hashKey":"object:6840"}]
+    .map((d) => {return {...d, "value":　d.value}});
+
+    //
+
+    const width = 900, height=500;
+    let widthPlot = width*0.8, heightPlot= height;
+    let widthLegends = width - widthPlot, heightLegends = height >>> 1;
+    const marginPlot = {top: 50, right:20, bottom:70, left: 50};
+    const marginLegends = {top: 50, right: 145, bottom: 0, left: 10}
+
+    const svg = d3.select("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", `0 0 ${width} ${height}`);
+    const groupPlot = svg.append("g")
+                        .classed("groupPlot", true);
+    const groupLegends = svg.append("g")
+                        .classed("groupLegends", true)
+                        .attr("transform", `translate(${widthPlot}, 0)`);
+
+    widthPlot = widthPlot - marginPlot.left - marginPlot.right;
+    heightPlot= heightPlot - marginPlot.top - marginPlot.bottom;
+    widthLegends = widthLegends - marginLegends.left - marginLegends.right;
+    heightLegends= heightLegends - marginLegends.top - marginLegends.bottom;
+
+    const colorScheme = d3.schemeAccent;
+    const universities = getKeys("color");
+    const scaleColor = d3.scaleOrdinal().domain(universities).range(colorScheme);
+
+    renderPlot(colorScheme);
+    renderLegends(colorScheme);
+
+    
+    function renderLegends(colorScheme) {
+      const step = heightLegends / universities.length;
+      const widthRect = step * 0.8;
+      groupLegends.append("g")
+                .classed("groupMarks", true)
+                .attr("transform", `translate(${marginLegends.left}, ${marginLegends.top})`)
+                .selectAll("rect")
+                .data(universities)
+                .join("rect")
+                  .attr("x", 5)
+                  .attr("y", (d, i) => i * step)
+                  .attr("width", widthRect)
+                  .attr("height", widthRect)
+                  .attr("fill", (d) => scaleColor(d));
+      groupLegends.append("g")
+                .classed("groupTitle", true)
+                .append("text")
+                .attr("transform", `translate(${marginLegends.left}, ${marginLegends.top - 5})`)
+                .text("color")
+                .attr('fill', 'black')
+                .attr("text-anchor", "start")
+      groupLegends.append("g")
+                .classed("groupAxis", true)
+                .attr("transform", `translate(${marginLegends.left + widthLegends}, ${marginLegends.top})`)
+                .selectAll("text")
+                .data(universities)
+                .join("text")
+                  .attr("y", (d, i) => (i + 0.5) * step)
+                  .attr("font-size", 10)
+                  .text((d) => d);
+    }
+                        
+    function renderPlot(colorScheme) {
+      const years = getKeys("label").sort((a, b) => + a - b);
+      const dataGroupByLabel = d3.group(data, d => d.label);
+      // compute the maxY, sort and compute stack.
+      const maxY = d3.max(dataGroupByLabel, d => {
+                    d[1].sort((a, b) => {return universities.indexOf(b.color) - universities.indexOf(a.color)})
+                    return d[1].reduce((acc, cur) => {cur.extentValue=[acc, acc + cur.value]; return acc + cur.value}, 0)
+                  });
+      const scaleX = d3.scaleBand().domain(years).range([0, widthPlot]).paddingInner(0.1);
+      const scaleY = d3.scaleLinear().domain([0, maxY]).range([heightPlot, 0]).nice();
+      
+      groupPlot.append("g")
+                  .classed("groupAxisX", true)
+                  .attr("transform", `translate(${marginPlot.left}, ${marginPlot.top + heightPlot})`)
+                  .call(d3.axisBottom(scaleX).tickSizeOuter(0))
+                  .selectAll("text")
+                  .attr("text-anchor", "start")
+                  .attr("transform", "translate(12, 5) rotate(90)")
+                  //.style("writing-mode", "tb")
+      groupPlot.append("g")
+                  .classed("groupAxisY", true)
+                  .attr("transform", `translate(${marginPlot.left}, ${marginPlot.top})`)
+                  .call(d3.axisLeft(scaleY))
+      groupPlot.append("g")
+                  .classed("groupGrids", true)
+                  .attr("transform", `translate(${marginPlot.left}, ${marginPlot.top})`)
+                  .call(d3.axisLeft(scaleY))
+                  .call((groupGrids) => {
+                    groupGrids.select("path").remove();
+                    groupGrids.selectAll("text").remove();
+                    groupGrids.selectAll("line")
+                                .attr("x2", widthPlot)
+                                .attr("opacity", 0.3)
+                  })
+      const minYear = years[0];
+      groupPlot.append("g")
+                  .classed("groupMarks", true)
+                  .attr("transform", `translate(${marginPlot.left}, ${marginPlot.top})`)
+                  .selectAll("rect")
+                  .data(dataGroupByLabel)
+                  .join("g")
+                  .attr("class", (d) => d[0])
+                    .selectAll("rect")
+                    .data((d, i) => d[1])
+                    .join("rect")
+                      .attr("x", (d) => scaleX(+d.label))
+                      .attr("y", (d) => scaleY(+d.extentValue[1]))
+                      .attr("height", (d) => scaleY(+d.extentValue[0]) - scaleY(+d.extentValue[1]))
+                      .attr("width", scaleX.bandwidth())
+                      .attr("fill", (d) => scaleColor(d.color))
+
+    }
+
+    function changeColorScheme(obj) {
+      const schemeString = obj.options[obj.options.selectedIndex].value;
+      const colorScheme = translateD3ColorScheme(schemeString);
+      scaleColor.range(colorScheme);
+      
+      groupLegends.select(".groupMarks")
+                    .selectAll("rect")
+                    .attr("fill", (d) => scaleColor(d))
+      
+      groupPlot.select(".groupMarks")
+      groupPlot.appen
+      const minYear = years[0];
+      groupPlot.append("g")
+                  .classed("groupMarks", true)
+                  .attr("transform", `translate(${marginPlot.left}, ${marginPlot.top})`)
+                  .selectAll("rect")
+                  .data(dataGroupByLabel)
+                  .join("g")
+                  .attr("class", (d) => d[0])
+                    .selectAll("rect")
+                    .data((d, i) => d[1])
+                    .join("rect")
+                      .attr("x", (d) => scaleX(+d.label))
+                      .attr("y", (d) => scaleY(+d.extentValue[1]))
+                      .attr("height", (d) => scaleY(+d.extentValue[0]) - scaleY(+d.extentValue[1]))
+                      .attr("width", scaleX.bandwidth())
+                      .attr("fill", (d) => scaleColor(d.color))
+
+    }
+
+    function changeColorScheme(obj) {
+      const schemeString = obj.options[obj.options.selectedIndex].value;
+      const colorScheme = translateD3ColorScheme(schemeString);
+      scaleColor.range(colorScheme);
+      
+      groupLegends.select(".groupMarks")
+                    .selectAll("rect")
+                    .attr("fill", (d) => scaleColor(d))
+      
+      groupPlot.select(".groupMarks")
+                  .selectAll("rect")
+                  .attr("fill", (d) => scaleColor(d.color))
+    }
+
+    function getKeys(field) {
+      const keySet = new Set;
+      for(let i=0; i<data.length; i++) {
+        keySet.add(data[i][field]);
+      }
+      return Array.from(keySet);
+    }
+
+    function translateD3ColorScheme(colorSchemeString){
+      switch(colorSchemeString){
+        case "accent":
+          return d3.schemeAccent;
+        case "category10":
+          return d3.schemeCategory10;
+        case "dark2":
+          return d3.schemeDark2;
+        case "paired":
+          return d3.schemePaired;
+        case "pastel1":
+          return d3.schemePastel1;
+        case "pastel2":
+          return d3.schemePastel2;
+        case "set1":
+          return d3.schemeSet1;
+        case "set2":
+          return d3.schemeSet2;
+        case "set3":
+          return d3.schemeSet3;
+        case "tableau10":
+          return d3.schemeTableau10;
+        default:
+          throw Error("No such color scheme in d3!")
+      }
+    } 
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Interactive Legend</title>
+</head>
+
+<body>
+    <h1>Interactive Legend</h1>
+    <a href="https://vega.github.io/vega/examples/interactive-legend/">source</a>
+    <br>
+    <br>
+    <br>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+
+        margin = { left: 150, right: 150, top: 50, bottom: 90 };
+        width = 450;
+        height = 400;
+        var svg = d3.select("body").append("svg").attr("id", "main_panel")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+        // the first parameter about panel
+        var data_panel = svg.append("g").attr("id", "data_panel")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("width", width)
+            .attr("height", height);
+
+        // create scale objects
+        var xScale = d3.scaleLinear().range([0, width]);
+        var yScale = d3.scaleLinear().range([height, 0]);
+        var Origin_color = {
+            USA: "#1f77b4",
+            Japan: "#ff7f0e",
+            Europe: "#2ca02c",
+            unSelected: "#000"
+        }
+        filterOrigin = {
+            USA: true,
+            Japan: true,
+            Europe: true
+        };
+        d3.json("https://vega.github.io/vega/data/cars.json", function (error, data) {
+            //
+            var domainByTrait = {};
+            var Origin_set = new Set();
+            for (let i = 0; i < data.length; i++) {
+                Origin_set.add(data[i]["Origin"]);
+            }
+            // traits = d3.keys(data[0]).filter(function (d) { return d === "Horsepower" || d === "Miles_per_Gallon"; });
+            // n = traits.length;
+            // traits.forEach(function (trait) {
+            //     domainByTrait[trait] = d3.extent(data, function (d) { return d[trait]; });
+            // });
+            // 
+            xScale.domain([0, d3.max(data, function (d) { return d.Horsepower; })]).nice();
+            yScale.domain([0, d3.max(data, function (d) { return d.Miles_per_Gallon; })]).nice();
+            render(data, filterOrigin)
+
+            var legend_panel = d3.select("#main_panel").append("g").attr("id", "legend_panel")
+                .attr("transform", "translate(" + (margin.left + width + 30) + "," + (margin.top + 20) + ")")
+                .attr("width", margin.right)
+                .attr("height", height);
+            legend_panel.append('text')
+                .text('Origin')
+                .attr('font-size', '1.5em')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('fill', 'black')
+                .attr("text-anchor", "start")
+                .attr("dominant-baseline", "text-after-edge")
+                .attr("font-family", "sans-serif")
+                .attr("font-weight", "bold");
+            let h = 25;
+            ta = ["USA", "Japan", "Europe"]
+            // draw legend in loop, and add listener
+            for (let i = 0; i < 3; i++) {
+                let lg = legend_panel.append("g")
+                    .attr("id", "filter" + ta[i])
+                    .attr("transform", "translate(" + 10 + "," + (20 + h * i) + ")");
+                lg.append("text")
+                    .text(ta[i])
+                    .attr('font-size', '1em')
+                    .attr('x', 20)
+                    .attr('y', 0)
+                    .attr('fill', 'black')
+                    .attr("text-anchor", "start")
+                    .attr("dominant-baseline", "middle")
+                    .attr("font-family", "sans-serif");
+                lg.append("circle")
+                    .attr("r", 5)
+                    .attr("cx", 5)
+                    .attr("cy", 0)
+                    .attr("stroke", Origin_color[ta[i]])
+                    .attr("stroke-width", 3)
+                    .attr("fill", "none");
+                lg.on("click", function () {
+                    d3.event.stopPropagation();
+                    str = d3.select(this).attr("id");
+                    d3.selectAll(".dot").remove();
+                    if (str === "filterUSA") {
+                        filterOrigin["USA"] = true;
+                        filterOrigin["Japan"] = false;
+                        filterOrigin["Europe"] = false;
+                        render(data, filterOrigin);
+                    }
+                    if (str === "filterJapan") {
+                        filterOrigin["USA"] = false;
+                        filterOrigin["Japan"] = true;
+                        filterOrigin["Europe"] = false;
+                        render(data, filterOrigin);
+                    }
+                    if (str === "filterEurope") {
+                        filterOrigin["Japan"] = false;
+                        filterOrigin["USA"] = false;
+                        filterOrigin["Europe"] = true;
+                        render(data, filterOrigin);
+                    }
+                });
+            }
+            d3.select("#main_panel").on("click", function () {
+                d3.selectAll(".dot").remove();
+                filterOrigin["USA"] = true;
+                filterOrigin["Japan"] = true;
+                filterOrigin["Europe"] = true;
+                render(data, filterOrigin);
+            });
+
+            // create axis objects
+            xAxis = d3.axisBottom(xScale).ticks(4);
+            yAxis = d3.axisLeft(yScale);
+            // Draw Axis
+            gX = svg.append('g')
+                .attr('transform', 'translate(' + (margin.left) + ',' + (margin.top + height) + ')')
+                .call(xAxis)
+                .call(function (g) {
+                    g.selectAll(".tick line")
+                        .clone()
+                        .attr("y2", -height)
+                        .attr("opacity", 0.3);
+                });
+
+            gY = svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .call(yAxis)
+                .call(function (g) {
+                    g.selectAll(".tick line")
+                        .clone()
+                        .attr("x2", width)
+                        .attr("opacity", 0.3);
+                });
+            // draw texts beside legend
+            x_legend = svg.append("g")
+                .append("text")
+                .text("Horsepower")
+                .attr('font-size', '1.2em')
+                .attr('x', margin.left + width / 2)
+                .attr('y', margin.top + height + 50)
+                .attr('fill', 'black')
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("font-weight", "bold");
+            y_legend = svg.append("g")
+                .append("text")
+                .text("Miles_per_Gallon")
+                .attr('font-size', '1.2em')
+                .attr('y', 90)
+                .attr('x', -(margin.top + height / 2))
+                .attr('transform', 'rotate(-90)')
+                .attr('fill', 'black')
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("font-weight", "bold");
+
+        });
+
+
+
+
+
+
+        function render(data, filterOrigin) {
+            data_panel.selectAll("dot")
+                .data(data)
+                .enter().append("circle")
+                .attr('class', 'dot')
+                .attr("r", function (d) {
+                    if (d.Horsepower == null || d.Miles_per_Gallon == null) return r = 0;
+                    return r = 5;
+                })
+                .attr("cx", function (d) { return xScale(d.Horsepower); })
+                .attr("cy", function (d) { return yScale(d.Miles_per_Gallon); })
+                .attr("stroke", function (d) {
+                    if (filterOrigin[d.Origin]) {
+                        return Origin_color[d.Origin];
+                    } else {
+                        return Origin_color["unSelected"];
+                    }
+
+                })
+                .attr("stroke-width", 3)
+                .attr("fill", "none")
+                .attr("opacity", function (d) {
+                    if (filterOrigin[d.Origin]) {
+                        return 0.7;
+                    } else {
+                        return 0.1;
+                    }
+                });
+        }
+
+    </script>
+</body>
+
+</html>

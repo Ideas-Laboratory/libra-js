@@ -1,0 +1,204 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Top-K Plot With Others</title>
+</head>
+
+<body>
+    <h1>Top-K Plot With Others</h1>
+    <a href="https://vega.github.io/vega/examples/top-k-plot-with-others/">source</a>
+    <br>
+    <br>
+    <br>
+
+    <div style="position: relative; left: 750px;">
+        k &nbsp; &nbsp;&nbsp;
+        <input type="range" id="myRange" oninput="changeValue(this)">
+        <text id="rangevalue">20</text>
+        <br>
+        op &nbsp;
+        <select id="x-axis" onchange="changeOP(this)">
+            <option value="average" selected>average</option>
+            <option value="median">median</option>
+            <option value="sum">sum</option>
+        </select>
+    </div>
+    <svg style="display: inline;"></svg>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        var k = 20;
+        var op = "median";
+        function changeOP(obj) {
+            op = obj.options[obj.options.selectedIndex].value;
+            d3.selectAll(".changeAxis").remove();
+            render(topk(Data, k)[op].reverse(), op, k);
+
+        }
+        function changeValue(obj) {
+            let x = document.getElementById("myRange").value;
+            x = parseInt(x / 100 * 20 + 10);
+            document.getElementById("rangevalue").innerHTML = x;
+            k = x;
+            d3.selectAll(".changeAxis").remove();
+            render(topk(Data, k)[op].reverse(), op, k);
+        }
+
+
+        margin = { left: 150, right: 150, top: 50, bottom: 90 };
+        width = 560;
+        height = 500;
+        var svg = d3.select("svg").attr("id", "main_panel")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+        var data_panel = svg.append("g").attr("id", "data_panel")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("width", width)
+            .attr("height", height);
+
+        // create scale objects
+        var xScale = d3.scaleLinear().range([0, width]);
+        var yScale = d3.scaleBand().range([height, 0]);
+
+        var Data;
+        d3.json("https://vega.github.io/vega/data/movies.json", function (error, data) {
+            data = data.filter(function (d) {
+                return (!isNaN(d["Worldwide Gross"])) && d.Director !== null;
+            });
+            Data = data;
+            render(topk(Data, k)[op].reverse(), op, k);
+
+            var legend_panel = d3.select("#main_panel").append("g").attr("id", "legend_panel")
+                .attr("transform", "translate(" + (margin.left) + "," + (margin.top - 15) + ")")
+                .attr("width", margin.right)
+                .attr("height", height)
+                .append("text")
+                .text("Top Directors by Median Worldwide Gross")
+                .attr("font-size", "1.2em")
+                .attr("font-weight", "bold");
+            //Top Directors by Median Worldwide Gross
+
+
+        });
+
+        function topk(data, k) {//。get the sorted result
+            set = new Set();
+            dataArr = [];
+            for (let i = 0; i < data.length; i++) {
+                // if(data[i].Director===null)continue;
+                set.add(data[i].Director);
+            }
+            topkArrObj = {
+                average: [],
+                sum: [],
+                median: []
+            };
+            for (let item of set.values()) {
+                let ob = {//stored in dataArr，the infomation of each name
+                    name: item,
+                    number: 0,
+                    sum: 0,
+                    average: 0,
+                    median: 0,
+                    arr: []
+                }
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].name === null) continue;
+                    if (data[i].Director === item) {
+                        ob.arr[ob.arr.length] = data[i]["Worldwide Gross"];
+                    }
+                }
+                ob.number = ob.arr.length;
+                for (let i = 0; i < ob.arr.length; i++) {
+                    ob.sum = ob.sum + ob.arr[i];
+                }
+                ob.average = ob.sum / ob.number;
+                ob.arr = ob.arr.sort();
+                ob.median = ob.arr[parseInt(ob.arr.length / 2)];
+                dataArr[dataArr.length] = ob;
+            }
+            var kind = ["sum", "average", "median"];
+            for (let i = 0; i < kind.length; i++) {
+                sortArr = dataArr.sort(function (x, y) {
+                    if (x[kind[i]] < y[kind[i]]) return 1;
+                    if (x[kind[i]] > y[kind[i]]) return -1;
+                    return 0;
+                });
+                arr_slice = sortArr.slice(0, k);
+                for (let m = 0; m < k - 1; m++) {
+                    let obj = {
+                        name: "",
+                        op: kind[i],
+                        value: 0
+                    }
+                    obj.name = arr_slice[m].name;
+                    obj.value = arr_slice[m][kind[i]];
+                    topkArrObj[kind[i]][m] = obj;
+                }
+                let other_Sum = 0;
+                for (let m = k - 1; m < sortArr.length; m++) {
+                    other_Sum = other_Sum + sortArr[m][kind[i]];
+                }
+                let other_value = 0;
+                if (kind[i] === "sum") other_value = other_Sum;
+                if (kind[i] === "average") other_value = other_Sum / (sortArr.length - k + 1);
+                if (kind[i] === "median") other_value = sortArr[parseInt((sortArr.length + k - 1) / 2)].median;
+                topkArrObj[kind[i]][topkArrObj[kind[i]].length] = {
+                    name: "others",
+                    op: kind[i],
+                    value: other_value
+                }
+                topkArrObj[kind[i]] = topkArrObj[kind[i]].sort(function (x, y) {
+                    if (x.value < y.value) return 1;
+                    if (x.value > y.value) return -1;
+                    return 0;
+                });
+
+            }
+            return topkArrObj;
+        }
+
+
+
+
+        function render(data, op, k) {
+            //
+            xScale.domain([0, d3.max(data, function (d) { return d.value; })]);
+            yScale.domain(data.map(function (d) { return d.name }));
+            data_panel.selectAll(".changeAxis")
+                .data(data)
+                .enter().append("rect")
+                .attr('class', 'changeAxis')
+                .attr("x", 0)
+                .attr("y", function (d) { return yScale(d.name); })
+                .attr("width", d => {
+                    return xScale(d.value);
+                })
+                .attr("height", parseInt(height / k) - parseInt(10 - 0.2 * k))
+                .attr("fill", "#4c78a8");
+
+            xAxis = d3.axisBottom(xScale).tickFormat(d3.format("($.0f")).ticks(4);
+            yAxis = d3.axisLeft(yScale).ticks(k);
+            //draw axis
+            gX = svg.append('g')
+                .attr("class", "changeAxis")
+                .attr('transform', 'translate(' + (margin.left) + ',' + (margin.top + height) + ')')
+                .call(xAxis)
+                .call(function (g) {
+                    g.selectAll(".tick text").attr("font-size", "15px")
+                });
+            gY = svg.append('g')
+                .attr("class", "changeAxis")
+                .attr('transform', 'translate(' + (margin.left) + ',' + margin.top + ')')
+                .call(yAxis)
+                .call(function (g) {
+                    g.selectAll(".tick text").attr("font-size", "15px")
+                });
+        }
+
+
+
+    </script>
+</body>
+
+</html>

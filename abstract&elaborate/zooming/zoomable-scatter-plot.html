@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Zoomable Scatter Plot</title>
+</head>
+<body>
+    <h1>Zoomable Scatter Plot</h1>
+    <a href="https://vega.github.io/vega/examples/zoomable-scatter-plot/">source</a>
+    <br>
+    <br>
+    <br>
+    <svg width="600" height="600"></svg>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+    
+    
+        // dimensions and margins
+        var svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height"),
+            width = 0.8 * width;
+        height = 0.8 * height;
+        var margin = { top: (0.1 * width), right: (0.1 * width), bottom: (0.1 * width), left: (0.1 * width) };
+    
+        // create a clipping region 
+        svg.append("defs").append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+    
+        // create scale objects
+        var xScale = d3.scaleLinear();
+        var yScale = d3.scaleLinear();
+    
+    
+        // Draw Datapoints
+        var points_g = svg.append("g")
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .attr("clip-path", "url(#clip)")
+            .classed("points_g", true);
+    
+        //data = genRandomData(n, max);
+        //https://vega.github.io/vega/data/normal-2d.json
+        var points = points_g.selectAll("circle");
+        function type(d) {
+            d.u = +d.u;
+            d.v = +d.v;
+            return d;
+        }
+        var Data;
+        var That;
+        var def=5;
+        d3.json("https://vega.github.io/vega/data/normal-2d.json").then(function (data) {
+            Data = data;
+            
+            xScale.domain([d3.min(data, function (d) { return d.u; }), d3.max(data, function (d) { return d.u; })]).range([0, width]);
+            yScale.domain([d3.min(data, function (d) { return d.v; }), d3.max(data, function (d) { return d.v; })]).range([height, 0]);
+            points = points.data(data)
+                .enter().append("circle")
+                .attr('cx', function (d) { return xScale(d.u) })
+                .attr('cy', function (d) { return yScale(d.v) })
+                .attr('r', 5)
+                .attr("fill", "steelblue")
+                .attr("opacity", 0.6)
+                .on("mouseover",function(){
+                    That=this;
+                    d3.select(this).attr("fill","#FF6666")
+                })
+                .on("mouseout",function(){
+                    d3.select(this).attr("fill","steelblue")
+                })
+                .on("mousedown",function(){
+                    d3.select(this).attr("r",d3.select(this).attr("r")*2);
+                })
+                .on("mouseup",function(){
+                    
+                    d3.select(this).attr("r",d3.select(this).attr("r")/2);
+                })
+                ;
+                
+            // create axis objects
+            xAxis = d3.axisBottom(xScale);
+            yAxis = d3.axisLeft(yScale);
+            // Draw Axis
+            gX = svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
+                .call(xAxis);
+            gY = svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .call(yAxis);
+        });
+    
+        // Pan and zoom
+        var zoom = d3.zoom()
+            .scaleExtent([1, 20])
+            .extent([[0, 0], [width, height]])
+            .on("zoom", zoomed);
+            /*
+        Rect = svg.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(zoom)
+            .lower();
+    */
+        svg.call(zoom)
+        .on("dblclick.zoom",null);
+    
+        function zoomed() {
+
+            // create new scale ojects based on event
+            var new_xScale = d3.event.transform.rescaleX(xScale);
+            var new_yScale = d3.event.transform.rescaleY(yScale);
+            // update axes
+            gX.call(xAxis.scale(new_xScale));
+            gY.call(yAxis.scale(new_yScale));
+            /*
+            points.data(Data)
+                .attr('cx', function (d) { return new_xScale(d.x) })
+                .attr('cy', function (d) { return new_yScale(d.y) });u
+    */
+            //xScale.domain([d3.min(Data, function (d) { return d.u; }), d3.max(Data, function (d) { return d.u; })]).range([0, width]);
+            //  yScale.domain([d3.min(Data, function (d) { return d.v; }), d3.max(Data, function (d) { return d.v; })]).range([height, 0]);
+            points = points.data(Data)
+                .attr('cx', function (d) { return new_xScale(d.u) })
+                .attr('cy', function (d) { return new_yScale(d.v) })
+                .attr('r', 5)
+                .attr("fill", "steelblue")
+                .attr("opacity", 0.6);
+
+        }
+    </script>
+
+
+
+
+</body>
+</html>
+
+
+
+

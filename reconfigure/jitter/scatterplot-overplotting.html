@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Scatterplot Overplotting</title>
+</head>
+
+<body>
+  <h1>Scatterplot Overplotting</h1>
+  <a href="https://observablehq.com/@john-guerra/overlapping-scatterplots">source</a>
+  <br>
+  <br>
+  <br>
+  <div>
+    <form onInput="result.value=parseFloat(inputRadius.value); radiusInputListener(result.value)">
+      <b style="font-size: small;">radius</b><br>
+      <input type="range" id="inputRadius" name="inputRadius" min=1 max=50 value=10 step=0.01>
+      <output name="result" for="inputRaidus">10</output>
+    </form>
+  </div>
+  <div>
+    <form onInput="result.value=parseFloat(inputJitter.value); jitterInputListener(result.value)">
+      <b style="font-size: small;">Amount of jitter</b><br>
+      <input type="range" id="inputJitter" name="Amount of jitter" min=1 max=47.7 value=1 step=0.01>
+      <output name="result" for="inputJitter">1</output>
+    </form>
+  </div>
+  <br>
+  <svg></svg>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script>
+    data = d3.range(250).map(d => ({
+      x: Math.floor(Math.random() * 5) + 1,
+      y: Math.floor(Math.random() * 5) + 1,
+    }))
+
+    const width = 1200;
+    const iwidth = width / 2;
+    const height = iwidth * 0.7;
+    const margin = ({ top: 20, right: 30, bottom: 30, left: 40 })
+    let jitterValue = 1;
+    let r = 10;
+
+    x = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.x)]).nice()
+      .range([margin.left, iwidth - margin.right])
+
+    y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.y)]).nice()
+      .range([height - margin.bottom, margin.top])
+
+    xAxis = g => g
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x))
+      .call(g => g.select(".domain").remove())
+      .call(g => g.append("text")
+        .attr("x", width - margin.right)
+        .attr("y", -4)
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "end")
+        .attr("font-size", "12pt")
+        .text(data.x))
+
+    yAxis = g => g
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y))
+      .call(g => g.select(".domain").remove())
+      .call(g => g.select(".tick:last-of-type text").clone()
+        .attr("x", 4)
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+        .attr("font-size", "12pt")
+        .text(data.y))
+
+    const jitter = () => Math.random() * jitterValue
+
+    const svg = d3.select("svg")
+      .attr("width", iwidth)
+      .attr("height", height)
+      .attr("viewBox", [0, 0, iwidth, height]);
+
+    svg.append("g")
+      .call(xAxis);
+
+    svg.append("g")
+      .call(yAxis);
+
+    const groupMarks = svg.append("g")
+      .attr("stroke-width", 1.5)
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .selectAll("g")
+      .data(data)
+      .join("g")
+      .classed("jitter", true)
+      .attr("transform", d => `translate(${x(d.x) + jitter()},${y(d.y) + jitter()})`)
+      .call(g => g.append("circle")
+        .attr("stroke", "steelblue")
+        .attr("fill", "steelblue")
+        .style("opacity", "0.3")
+        .attr("r", r))
+      .call(g => g.append("text")
+        .attr("dy", "0.35em")
+        .attr("x", 7)
+        .text(d => d.name));
+
+    function radiusInputListener(value) {
+      groupMarks.selectAll("circle").attr("r", value)
+    }
+    function jitterInputListener(value) {
+      jitterValue = value;
+      groupMarks.attr("transform", d => `translate(${x(d.x) + jitter()},${y(d.y) + jitter()})`)
+    }
+
+  </script>
+</body>
+
+</html>
